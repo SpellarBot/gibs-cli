@@ -1,0 +1,70 @@
+{
+	"env": {
+		"browser": true,
+		"es6": true
+	},
+	"extends": "eslint:recommended",
+	"parser": "babel-eslint",
+	"parserOptions": {
+		"ecmaVersion": 8,
+		"ecmaFeatures": {
+			"experimentalObjectRestSpread": true,
+			"jsx": true
+		},
+		"sourceType": "module"
+	},
+	"plugins": [
+		"sort-imports-es6-autofix",
+		"babel"
+	],
+	"globals": {
+		"process" : true
+	},
+	"rules": {
+		"babel/semi": "error",
+		"babel/object-curly-spacing": ["error", "always"],
+		"babel/quotes": ["error", "single"],
+		"no-console": "warn",
+		"no-unused-vars" : "error",
+		"func-style": ["error", "declaration", { "allowArrowFunctions": true }],
+		"func-call-spacing": ["error", "never"],
+		"no-constant-condition": ["error", { "checkLoops": false }],
+		"no-trailing-spaces": "error",
+		"no-whitespace-before-property": "error",
+		"spaced-comment": "error",
+		"space-unary-ops": "error",
+		"space-before-blocks": "error",
+		"keyword-spacing": ["error", { "after": true }],
+		"object-curly-spacing": ["error", "always"],
+		"no-multi-spaces": "error",
+		"block-scoped-var": "error",
+		"no-mixed-spaces-and-tabs":"error",
+		"no-extra-parens": ["error", "all", { "nestedBinaryExpressions": false }],
+		"line-comment-position": ["error", { "position": "above" }],
+		"lines-around-comment": ["error", { "beforeBlockComment": false, "beforeLineComment": false }],
+		"linebreak-style": ["error", "unix"],
+		"space-before-function-paren": ["error", {
+			"anonymous": "never",
+			"named": "never",
+			"asyncArrow": "always"
+		}],
+		"space-infix-ops": ["error", { "int32Hint": false } ],
+		"sort-imports-es6-autofix/sort-imports-es6": ["error", {
+			"ignoreCase": false,
+			"ignoreMemberSort": false,
+			"memberSyntaxSortOrder": ["none", "all", "single", "multiple"]
+		}],
+		"indent": [
+			"error",
+			"tab"
+		],
+		"quotes": [
+			"error",
+			"single"
+		],
+		"semi": [
+			"error",
+			"always"
+		]
+	}
+}
