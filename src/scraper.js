@@ -1,4 +1,4 @@
-import ProgressBar		from './ProgressBar';
+import ProgressBar		from './progressBar';
 import express			from 'express';
 import {
 	Fs,
