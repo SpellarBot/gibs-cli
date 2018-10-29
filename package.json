@@ -22,10 +22,10 @@
     "@babel/preset-env": "^7.1.0",
     "@babel/register": "^7.0.0",
     "babel-eslint": "^10.0.1",
-    "eslint": "^5.7.0",
+    "eslint": "^5.8.0",
     "eslint-plugin-babel": "^5.2.1",
     "eslint-plugin-sort-imports-es6-autofix": "^0.3.0",
-    "nodemon": "^1.18.4"
+    "nodemon": "^1.18.5"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -37,7 +37,7 @@
     "compression": "^1.7.3",
     "cors": "^2.8.4",
     "express": "^4.16.4",
-    "firebase-admin": "^6.0.0",
+    "firebase-admin": "^6.1.0",
     "fs-extra": "^7.0.0",
     "helmet": "^3.14.0",
     "mongodb": "^3.1.8",
