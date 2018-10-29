@@ -11,7 +11,6 @@ import {
 
 const fsReadFile		= promisify(fs.readFile);
 const fsWriteFile		= promisify(fs.writeFile);
-const fsStat			= promisify(fs.stat);
 
 const router			= express.Router();
 
@@ -19,27 +18,31 @@ router.get('/injest', asyncHandler( async (req, res) => {
 	req.setTimeout(40000000);
 	try {
 		const getLinks = async (webLink, filter) => {
-			const links	= [];
-			const w		= await axios.get(webLink);
-			const $		= cheerio.load(w.data);
-			let linky	= $('a');
-			$(linky).map( (i, link) => {
-				let workingLink = $(link).attr('href');
-				if (workingLink && workingLink.includes(filter) && filter !== '/gibbs/html/') {
-					workingLink = 'https://www.ncdc.noaa.gov' + workingLink;
-					links.push(workingLink);
-				} else if (workingLink && workingLink.includes(filter) && filter === '/gibbs/html/') {
-					workingLink		= workingLink.split('/');
-					let interval	= workingLink[5].split('-')[1];
-					interval		= ('0' + interval).slice(-2);
-					workingLink.splice(-1,1);
-					workingLink.push(webLink.split('/')[5]);
-					let newLink = workingLink.join('/');
-					newLink = `https://www.ncdc.noaa.gov${newLink}-${interval}`;
-					links.push(newLink);
-				}
-			});
-			return links;
+			try {
+				const links	= [];
+				const w		= await axios.get(webLink);
+				const $		= cheerio.load(w.data);
+				let linky	= $('a');
+				$(linky).map( (i, link) => {
+					let workingLink = $(link).attr('href');
+					if (workingLink && workingLink.includes(filter) && filter !== '/gibbs/html/') {
+						workingLink = 'https://www.ncdc.noaa.gov' + workingLink;
+						links.push(workingLink);
+					} else if (workingLink && workingLink.includes(filter) && filter === '/gibbs/html/') {
+						workingLink		= workingLink.split('/');
+						let interval	= workingLink[5].split('-')[1];
+						interval		= ('0' + interval).slice(-2);
+						workingLink.splice(-1,1);
+						workingLink.push(webLink.split('/')[5]);
+						let newLink = workingLink.join('/');
+						newLink = `https://www.ncdc.noaa.gov${newLink}-${interval}`;
+						links.push(newLink);
+					}
+				});
+				return links;
+			} catch (error) {
+				console.log('getLinks catch block', error);
+			}
 		};
 
 		const Bar		= new ProgressBar();
@@ -99,32 +102,34 @@ router.get('/injest', asyncHandler( async (req, res) => {
 
 router.get('/download', asyncHandler( async (req, res) => {
 	req.setTimeout(40000000);
-	let imagesDownloaded = 0;
 
 	const downloadImage = async (link) => {
-		let linkParts	= link.split('/');
-		const dir		= `data/${linkParts[5]}/${linkParts[6]}`;
-		const fileName	= `${linkParts[7]}.jpg`;
-		await Fs.ensureDir(dir);
+		try {
+			let linkParts	= link.split('/');
+			const dir		= `data/${linkParts[5]}/${linkParts[6]}`;
+			const fileName	= `${linkParts[7]}.jpg`;
+			await Fs.ensureDir(dir);
 
-		if (fs.existsSync(`${dir}/${fileName}`)) {
-			console.log('image exists');
-			return;
+			if (fs.existsSync(`${dir}/${fileName}`)) {
+				console.log('image exists');
+				return;
+			}
+
+			const response		= await axios({
+				method			: 'GET',
+				url				: link,
+				responseType	: 'stream'
+			});
+
+			response.data.pipe(fs.createWriteStream(`${dir}/${fileName}`));
+			return new Promise( (resolve, reject) => {
+				Bar.update(imagesDownloaded);
+				response.data.on('end', () => resolve());
+				response.data.on('error', () => reject());
+			});
+		} catch (error) {
+			console.log('error');
 		}
-
-		const response		= await axios({
-			method			: 'GET',
-			url				: link,
-			responseType	: 'stream'
-		});
-
-		response.data.pipe(fs.createWriteStream(`${dir}/${fileName}`));
-		return new Promise( (resolve, reject) => {
-			imagesDownloaded++;
-			Bar.update(imagesDownloaded);
-			response.data.on('end', () => resolve());
-			response.data.on('error', () => reject());
-		});
 	};
 
 	let allLinks	= await fsReadFile('links/images.json', { encoding: 'utf-8' });
@@ -133,8 +138,10 @@ router.get('/download', asyncHandler( async (req, res) => {
 	const Bar		= new ProgressBar();
 	Bar.init(Object.keys(allLinks).length);
 
+	let imagesDownloaded = 0;
 	for (const image of Object.values(allLinks)) {
-		await downloadImage(image.link);
+		await downloadImage(image.link, imagesDownloaded);
+		imagesDownloaded++;
 	}
 
 	res.status(200).send({
