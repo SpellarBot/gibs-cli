@@ -111,7 +111,6 @@ router.get('/download', asyncHandler( async (req, res) => {
 			await Fs.ensureDir(dir);
 
 			if (fs.existsSync(`${dir}/${fileName}`)) {
-				console.log('image exists');
 				return;
 			}
 
