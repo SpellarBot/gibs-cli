@@ -1,5 +1,5 @@
 {
-	"name": "gibbs-scraper",
+	"name": "gibs-scraper",
 	"version": "1.0.0",
 	"description": "boilerplate for express with babel7 designed to run on Google App Engine Standard enviornment",
 	"main": "dist/app.js",
@@ -31,6 +31,7 @@
 		"axios": "^0.18.0",
 		"chalk": "^2.4.1",
 		"cheerio": "^1.0.0-rc.2",
-		"fs-extra": "^7.0.0"
+		"fs-extra": "^7.0.0",
+		"request": "^2.88.0"
 	}
 }

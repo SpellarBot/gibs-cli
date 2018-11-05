@@ -75,15 +75,17 @@ export default async () => {
 		for (const day of Object.entries(dayLinks)) {
 			if (day[0] && !day[1]) {
 				const dailyImageLinks = await getLinks(`${baseUrl}${day[0]}`, '/html/');
-				await Promise.all(dailyImageLinks.map( (link) => {
-					link			= link.replace('/html', '/image');
-					allLinks[link]	= false;
-				}));
+				if (dailyImageLinks) {
+					await Promise.all(dailyImageLinks.map( (link) => {
+						link			= link.replace('/html', '/image');
+						allLinks[link]	= false;
+					}));
 
-				dayLinks[day[0]] = true;
-				await fsWriteFile('links/days.json', JSON.stringify(dayLinks, null, '\t'));
-				await fsWriteFile('links/images.json', JSON.stringify(allLinks, null, '\t'));
-				Bar.update(Object.keys(allLinks).length);
+					dayLinks[day[0]] = true;
+					await fsWriteFile('links/days.json', JSON.stringify(dayLinks, null, '\t'));
+					await fsWriteFile('links/images.json', JSON.stringify(allLinks, null, '\t'));
+					Bar.update(Object.keys(allLinks).length);
+				}
 			}
 		}
 	} catch (error) {
