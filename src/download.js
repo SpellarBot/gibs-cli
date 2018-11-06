@@ -8,7 +8,7 @@ import {
 
 const fsReadFile		= promisify(fs.readFile);
 
-export default async () => {
+export default async (commands) => {
 	const downloadImage = async (link) => {
 		try {
 			let linkParts	= link.split('/');
@@ -28,40 +28,34 @@ export default async () => {
 
 			response.data.pipe(fs.createWriteStream(`${dir}/${fileName}`));
 			return new Promise( (resolve, reject) => {
-				Bar.update(imagesDownloaded);
 				response.data.on('end', () => resolve());
 				response.data.on('error', () => reject());
 			});
 		} catch (error) {
-			console.log(error);
-			console.log('error');
+			console.log('error:', error.code);
 		}
 	};
 
-	let allLinks	= await fsReadFile('links/images.json', { encoding: 'utf-8' });
-	allLinks		= JSON.parse(allLinks);
+	let allLinks	= JSON.parse(await fsReadFile('links/images.json', { encoding: 'utf-8' }));
+	const dlLinks	= [];
 
-	const Bar		= new ProgressBar();
-	let totalImages	= 0;
-
-	for (const image of Object.values(allLinks)) {
-		const imageLinkParts	= image.link.split('/');
-		const satillite			= imageLinkParts[5];
-		if (satillite === 'GOE-16') {
-			totalImages++;
+	for (const image of Object.keys(allLinks)) {
+		const imageLinkParts	= image.split('/');
+		const satillite			= imageLinkParts[3];
+		// const channel			= imageLinkParts[4];
+		// const date				= imageLinkParts[5];
+		if (satillite === commands['SAT']) {
+			dlLinks.push('https://www.ncdc.noaa.gov' + image);
 		}
 	}
 
-	console.log('Total Images:', totalImages);
-	Bar.init(totalImages);
+	const Bar		= new ProgressBar();
+	Bar.init(dlLinks.length);
 
-	let imagesDownloaded = 0;
-	for (const image of Object.values(allLinks)) {
-		const imageLinkParts	= image.link.split('/');
-		const satillite			= imageLinkParts[5];
-		if (satillite === 'GOE-16') {
-			await downloadImage(image.link, imagesDownloaded);
-			imagesDownloaded++;
-		}
+	let iterPos = 0;
+	for (const link of dlLinks) {
+		await downloadImage(link);
+		iterPos++;
+		Bar.update(iterPos);
 	}
 };
