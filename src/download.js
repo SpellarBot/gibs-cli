@@ -41,10 +41,8 @@ export default async (commands) => {
 
 	for (const image of Object.keys(allLinks)) {
 		const imageLinkParts	= image.split('/');
-		const satillite			= imageLinkParts[3];
-		// const channel			= imageLinkParts[4];
-		// const date				= imageLinkParts[5];
-		if (satillite === commands['SAT']) {
+		const satellite			= imageLinkParts[3];
+		if (commands['SAT'] === 'ALL' || satellite === commands['SAT']) {
 			dlLinks.push('https://www.ncdc.noaa.gov' + image);
 		}
 	}
