@@ -32,7 +32,7 @@ export default async (commands) => {
 				response.data.on('error', () => reject());
 			});
 		} catch (error) {
-			console.log('error:', error.code);
+			// console.log('error:', error.code);
 		}
 	};
 
