@@ -10,6 +10,9 @@ git clone https://github.com/brenwkennedy/gibs-puller
 npm i
 ```
 
+### How it works
+![flowchart](https://i.imgur.com/ZLrZUOR.png)
+
 ### Download the latest links
 This repo contains cached links of all images, theses are located in the links directory.
 
@@ -17,7 +20,7 @@ To update these links with images that have been published since the links were 
 ```bash
 npm run start injest
 ```
-or 
+or
 ```bash
 npm run build
 node dist/app.js injest
@@ -32,3 +35,9 @@ Downloads all images (~1.6M)
 ```bash
 npm run start download all
 ```
+
+### Available Satellites (updating)
+| Short Name  | Image Count | Active Dates |
+| ----------- | ----------- | ------------ |
+| SMS-1       |             |              |
+| SMS-2       |             |              |
