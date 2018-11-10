@@ -1,4 +1,5 @@
 import					'@babel/polyfill';
+import calculateStats	from './calculateStats';
 import download			from './download';
 import injest			from './injest';
 
@@ -21,6 +22,10 @@ const app = async () => {
 	try {
 		if (process.argv.includes('injest')) {
 			await injest();
+		}
+
+		if (process.argv.includes('stats')) {
+			await calculateStats();
 		}
 
 		if (process.argv.includes('download')) {
