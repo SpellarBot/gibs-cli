@@ -8,41 +8,42 @@ import {
 
 const fsReadFile		= promisify(fs.readFile);
 
-export default async (commands) => {
-	const downloadImage = async (link) => {
-		try {
-			let linkParts	= link.split('/');
-			const dir		= `data/${linkParts[5]}/${linkParts[6]}`;
-			const fileName	= `${linkParts[7]}.jpg`;
-			await Fs.ensureDir(dir);
+const downloadImage = async link => {
+	try {
+		let linkParts	= link.split('/');
+		const dir		= `data/${linkParts[5]}/${linkParts[6]}`;
+		const fileName	= `${linkParts[7]}.jpg`;
+		await Fs.ensureDir(dir);
 
-			if (fs.existsSync(`${dir}/${fileName}`)) {
-				return;
-			}
-
-			const response		= await axios({
-				method			: 'GET',
-				url				: link,
-				responseType	: 'stream'
-			});
-
-			response.data.pipe(fs.createWriteStream(`${dir}/${fileName}`));
-			return new Promise( (resolve, reject) => {
-				response.data.on('end', () => resolve());
-				response.data.on('error', () => reject());
-			});
-		} catch (error) {
-			// console.log('error:', error.code);
+		if (fs.existsSync(`${dir}/${fileName}`)) {
+			return;
 		}
-	};
 
+		const response		= await axios({
+			method			: 'GET',
+			url				: link,
+			responseType	: 'stream'
+		});
+
+		response.data.pipe(fs.createWriteStream(`${dir}/${fileName}`));
+		return new Promise( (resolve, reject) => {
+			response.data.on('end', () => resolve());
+			response.data.on('error', () => reject());
+		});
+	} catch (error) {
+		console.log('error:', error.code);
+	}
+};
+
+export default async program => {
+	const satellitesToDownload = program.download;
 	let allLinks	= JSON.parse(await fsReadFile('links/images.json', { encoding: 'utf-8' }));
 	const dlLinks	= [];
 
 	for (const image of Object.keys(allLinks)) {
 		const imageLinkParts	= image.split('/');
 		const satellite			= imageLinkParts[3];
-		if (commands['SAT'] === 'ALL' || satellite === commands['SAT']) {
+		if (satellitesToDownload.includes('ALL') || satellitesToDownload.includes(satellite)) {
 			dlLinks.push('https://www.ncdc.noaa.gov' + image);
 		}
 	}

@@ -4,31 +4,24 @@ export default class ProgressBar {
 	constructor() {
 		this.total;
 		this.current;
-		this.bar_length = process.stdout.columns - 150;
-		this.timestamp = Date.now();
-		this.averageTimeCounter = 0;
-		this.timeRemaining = '';
+		this.bar_length		= parseInt(process.stdout.columns / 3);
+		this.startTime		= process.hrtime.bigint();
 	}
 
 	init(total) {
 		this.total = total;
-		this.current = 0;
-		this.update(this.current);
 	}
 
 	update(current) {
-		this.current			= current;
-		const current_progress	= this.current / this.total;
-		if (this.averageTimeCounter === 10) {
-			const currentTime	= Date.now();
-			this.timeRemaining	= ((currentTime - this.timestamp) * (.1 / current_progress) / 60).toFixed(0) + ' Minutes';
-			this.timestamp		= currentTime;
-			this.averageTimeCounter = 0;
-		} else {
-			this.averageTimeCounter++;
-		}
+		const currentTime			= process.hrtime.bigint();
+		this.current				= current;
+		const current_progress		= this.current / this.total;
+		const itemsRemaining		= this.total - this.current;
+		const timeDiff				= parseInt(currentTime - this.startTime);
+		const itemPerSecond			= this.current / (timeDiff / Math.pow(10, 9));
+		const secondsRemaining		= parseInt(itemPerSecond * itemsRemaining);
 
-		this.draw(current_progress, this.timeRemaining);
+		this.draw(current_progress, this.parseSecondsToTimeRemainingString(secondsRemaining));
 	}
 
 	draw(current_progress, timeRemaining) {
@@ -44,6 +37,18 @@ export default class ProgressBar {
 		process.stdout.write(
 			`Processing: | Time Remaining: ${timeRemaining || ''} | [${filled_bar}${empty_bar}] | ${percentage_progress}%`
 		);
+	}
+
+	parseSecondsToTimeRemainingString(seconds) {
+		if (seconds > 86400) {
+			return Math.round(seconds / 86400, 1) + ' Days';
+		} else if (seconds > 3600) {
+			return Math.round(seconds / 3600, 2) + ' Hours';
+		} else if (seconds < 3600 && seconds > 60) {
+			return parseInt(seconds / 3600) + ' Minutes';
+		} else {
+			return parseInt(seconds) + ' Seconds';
+		}
 	}
 
 	get_bar(length, char, color = a => a) {

@@ -70,7 +70,7 @@ export default async () => {
 
 		console.log('\nDownloading Part 3 of 3');
 		const Bar		= new ProgressBar();
-		Bar.init(1664068);
+		Bar.init(1673289);
 
 		for (const day of Object.entries(dayLinks)) {
 			if (day[0] && !day[1]) {
