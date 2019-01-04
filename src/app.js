@@ -16,6 +16,8 @@ const main = async () => {
 			.option('-d, --download <items>', 'Download satellite images', commaSeparatedList)
 			.option('-s, --stats', 'Stats')
 			.option('-i, --injest', 'Injest images and store cached links')
+			.option('-c, --channel <items>', 'Download a specific channel of images')
+			.option('-p, --period <items>', 'Specify a date window to download')
 			.parse(process.argv);
 
 		if (program.download) {

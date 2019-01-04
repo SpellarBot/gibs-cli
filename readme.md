@@ -5,36 +5,50 @@ This is a command line tool written in Nodejs that pulls links and images from t
 This tool is simple and under active development. Here is how it works.
 
 ### Getting started
+
 ```bash
 git clone https://github.com/brenwkennedy/gibs-puller
 npm i
 ```
 
 ### How it works
+
 ![flowchart](https://i.imgur.com/ZLrZUOR.png)
 
 ### Download the latest links
-This repo contains cached links of all images, theses are located in the links directory.
 
-To update these links with images that have been published since the links were last updated, you can run the following command
+This repo contains cached links of all images, these links are located in the links directory as .json files.
+
+To update the links with the latest data, remove the existing .json files in the links directory and run the injest command
+
 ```bash
-npm run start injest
-```
-or
-```bash
-npm run build
-node dist/app.js injest
+npm run start -- -i
 ```
 
 ### Download images
-Download images from satellites
+
+Download images from specific satellites
+
 ```bash
-npm run start download sat GOE-16
+npm run start -- -d GOE-16
 ```
+
+Download images from specific channel
+
+```bash
+npm run start -- -d GOE-16 -c WV
+```
+
 Downloads all images (~1.6M)
+
 ```bash
-npm run start download all
+npm run start -- -d all
 ```
+
+### Flags
+`-i` `--injest` - caches links from NASA gibbs website
+`-d` `--download` - accepts `all, GOE-15, SMS-1` etc..
+`-c` `--channel` - accepts `IR, WV, VS, RG`
 
 ### Available Satellites (updating)
 ```json

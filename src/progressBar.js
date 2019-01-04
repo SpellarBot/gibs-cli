@@ -45,9 +45,9 @@ export default class ProgressBar {
 		} else if (seconds > 3600) {
 			return Math.round(seconds / 3600, 2) + ' Hours';
 		} else if (seconds < 3600 && seconds > 60) {
-			return parseInt(seconds / 3600) + ' Minutes';
+			return Math.round(seconds / 60, 2) + ' Minutes';
 		} else {
-			return parseInt(seconds) + ' Seconds';
+			return seconds + ' Seconds';
 		}
 	}
 

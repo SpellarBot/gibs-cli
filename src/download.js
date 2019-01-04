@@ -1,4 +1,4 @@
-import ProgressBar		from './progressBar';
+import ProgressBar		from './ProgressBar';
 import {
 	Fs,
 	axios,
@@ -36,14 +36,45 @@ const downloadImage = async link => {
 };
 
 export default async program => {
-	const satellitesToDownload = program.download;
+	const satelliteToDownload = program.download;
 	let allLinks	= JSON.parse(await fsReadFile('links/images.json', { encoding: 'utf-8' }));
 	const dlLinks	= [];
 
 	for (const image of Object.keys(allLinks)) {
 		const imageLinkParts	= image.split('/');
 		const satellite			= imageLinkParts[3];
-		if (satellitesToDownload.includes('ALL') || satellitesToDownload.includes(satellite)) {
+		const channel			= imageLinkParts[4];
+		const date				= imageLinkParts[5];
+
+		const verifySatellite = () => {
+			if (satelliteToDownload.includes('ALL') || satelliteToDownload.includes(satellite)) {
+				return true;
+			}
+		};
+
+		const verifyChannel = () => {
+			if (program.channel) {
+				if (program.channel.includes(channel)) {
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				return true;
+			}
+		};
+
+		const verifyPeriod = () => {
+			return true;
+			// if (program.period) {
+			// 	imageShouldDownload = false;
+			// 	// download images within specific period
+			// 	// const lowerPeriodRange = getIntFromGibbsDateString(program.period.split(':')[0])
+			// 	// const upperPeriodRange = getIntFromGibbsDateString(program.period.split(':')[0])
+			// }
+		};
+
+		if (verifySatellite() && verifyChannel() && verifyPeriod()) {
 			dlLinks.push('https://www.ncdc.noaa.gov' + image);
 		}
 	}
