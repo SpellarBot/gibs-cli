@@ -44,7 +44,7 @@ export default async program => {
 		const imageLinkParts	= image.split('/');
 		const satellite			= imageLinkParts[3];
 		const channel			= imageLinkParts[4];
-		const date				= imageLinkParts[5];
+		// const date				= imageLinkParts[5];
 
 		const verifySatellite = () => {
 			if (satelliteToDownload.includes('ALL') || satelliteToDownload.includes(satellite)) {
